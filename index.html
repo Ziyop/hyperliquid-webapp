@@ -1,33 +1,72 @@
+wss://api.hyperliquid.xyz/ws
+``` :contentReference[oaicite:2]{index=2}
+
+Voici comment tu peux écouter les événements "pair listed" (nouvelle paire). Adapte selon le format exact reçu (à vérifier).
+
+---
+
+## ✅ Étape 2 – Exemple complet d’`index.html`
+
+```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>LIQUIDWATCH</title>
 
-  <!-- ✅ Autoriser l'affichage en iframe (indispensable pour Telegram) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; frame-ancestors *;">
+  <!-- Autoriser Telegram iframe -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; frame-ancestors *;">
 
-  <!-- ✅ Script Telegram WebApp -->
+  <!-- Pour WebApp Telegram -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
     body {
-      background: #0d0d0d;
-      color: white;
+      background: #121212;
+      color: #fff;
       font-family: sans-serif;
       text-align: center;
-      padding: 2rem;
+      padding: 1rem;
     }
+    ul { list-style: none; padding: 0; }
+    li { background: #1f1f1f; margin: 0.5rem 0; padding: 0.5rem; border-radius: 5px;}
+    .loader { margin-top: 2rem; }
   </style>
 </head>
 <body>
-  <h1>👋 Welcome to LIQUIDWATCH</h1>
-  <p>Tracking new pairs on Hyperliquid...</p>
+  <h1>🔭 LIQUIDWATCH</h1>
+  <p>Écoute en direct les paires listées</p>
+  <ul id="pairsList"></ul>
+  <div id="status">Connexion...</div>
 
   <script>
-    window.Telegram.WebApp.ready();
-    window.Telegram.WebApp.expand(); // plein écran
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+
+    const ws = new WebSocket("wss://api.hyperliquid.xyz/ws");
+
+    ws.onopen = () => document.getElementById("status").innerText = "✅ Connecté";
+    ws.onerror = () => document.getElementById("status").innerText = "❌ Erreur WS";
+    ws.onclose = () => document.getElementById("status").innerText = "🔒 Déconnecté";
+
+    ws.onmessage = event => {
+      const data = JSON.parse(event.data);
+      // Suppose que "type":"pairListed"
+      if (data.type === "pairListed" || data.channel === "subscriptionResponse") {
+        const name = data.pairName || data.data.pairName;
+        if (name) {
+          const li = document.createElement("li");
+          li.innerText = name;
+          document.getElementById("pairsList").prepend(li);
+        }
+      }
+    };
+
+    // À adapter si le WS nécessite une souscription
+    // ws.send(JSON.stringify({ method: "subscribe", subscription: { type: "pairListed" } }));
   </script>
 </body>
 </html>
