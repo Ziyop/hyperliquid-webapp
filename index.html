@@ -1,16 +1,53 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <title>Hyperliquid Interface</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script>
-    window.Telegram.WebApp.ready();
-  </script>
-</head>
-<body style="background:#111; color:#fff; font-family:sans-serif; text-align:center; padding:2rem">
-  <h1>✅ Ça fonctionne !</h1>
-  <p>Bienvenue dans ton interface Telegram !</p>
-</body>
-</html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Hyperliquid WebApp</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #0e0e0e;
+        color: #ffffff;
+        text-align: center;
+        padding-top: 50px;
+      }
+      h1 {
+        margin-bottom: 20px;
+      }
+      .loader {
+        margin-top: 20px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #00aaff;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Bienvenue sur Hyperliquid !</h1>
+    <p id="welcome-text">Chargement des données Telegram...</p>
+    <div class="loader"></div>
 
+    <script>
+      const tg = window.Telegram.WebApp;
+      tg.expand(); // Plein écran
+
+      const user = tg.initDataUnsafe?.user;
+      if (user) {
+        document.getElementById("welcome-text").innerText = `👋 Bonjour ${user.first_name} !`;
+      } else {
+        document.getElementById("welcome-text").innerText = `👋 Bienvenue, utilisateur invité !`;
+      }
+    </script>
+  </body>
+</html>
