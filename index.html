@@ -30,13 +30,19 @@
       gap: 1rem;
       margin-bottom: 2rem;
     }
+    header a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
     header img {
-      width: 48px;
-      height: 48px;
+      width: 64px;
+      height: 64px;
     }
     h1 {
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: 700;
+      color: var(--foreground);
     }
     nav {
       display: flex;
@@ -99,11 +105,26 @@
       border: 1px solid var(--accent);
       border-radius: 0.3rem;
     }
+    footer {
+      border-top: 1px solid #333;
+      margin-top: 3rem;
+      padding-top: 1rem;
+      font-size: 0.9rem;
+      text-align: center;
+      color: #999;
+    }
+    .hype-logo {
+      width: 48px;
+      height: 48px;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
   <header>
-    <img src="liquidwatch.png" alt="LIQUIDWATCH logo">
+    <a href="#" onclick="switchTab('pairs')">
+      <img src="liquidwatch.png" alt="LIQUIDWATCH logo">
+    </a>
     <h1>LIQUIDWATCH</h1>
   </header>
 
@@ -128,9 +149,14 @@
   <section id="tab-hype" class="tab">
     <div class="section">
       <h2>HYPE Token Price Chart</h2>
+      <img src="hyp.png" alt="HYPE Logo" class="hype-logo" />
       <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_2b21d&symbol=PYTH:HYPEUSD&interval=30&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=F1F3F6&studies=[]&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=en"></iframe>
     </div>
   </section>
+
+  <footer>
+    <p>© pump.fun 2025 · <a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a></p>
+  </footer>
 
   <script>
     function switchTab(tab) {
