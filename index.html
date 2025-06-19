@@ -4,96 +4,193 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LIQUIDWATCH</title>
-
-  <!-- Autoriser iframe (Telegram) -->
-  <meta http-equiv="Content-Security-Policy"
-        content="default-src * 'self' 'unsafe-inline' data: blob:; frame-ancestors *;">
-
-  <!-- Logo -->
+  <meta name="description" content="Interface web pour suivre les nouvelles paires Hyperliquid." />
+  <link rel="icon" href="liquidwatch.png" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
   <style>
-    body { margin: 0; font-family: sans-serif; color: #eee; background: #111; }
-    header { display: flex; align-items: center; padding: 1rem; }
-    header img { height: 32px; margin-right: .5rem; }
-    h1 { margin: 0; font-size: 1.2rem; }
-    .pair { background: #222; margin: .5rem; padding: .5rem; border-radius: 6px; }
-    .pair img { height: 24px; vertical-align: middle; margin-right: .5rem; }
-    .chart { width: 100%; height: 150px; }
+    :root {
+      --background: #0d0f1a;
+      --foreground: #f0f0f0;
+      --accent: #00ffae;
+      --card: #1a1d2e;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      padding: 1rem;
+    }
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    header img {
+      height: 64px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    nav {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    nav button {
+      background: var(--card);
+      color: var(--foreground);
+      border: 1px solid var(--accent);
+      padding: 0.6rem 1.2rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    nav button:hover {
+      background: var(--accent);
+      color: #000;
+    }
+    .tab {
+      display: none;
+    }
+    .tab.active {
+      display: block;
+    }
+    .section {
+      border: 1px solid #333;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      background: var(--card);
+      margin-bottom: 2rem;
+    }
+    .token-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .token-card img {
+      width: 40px;
+      height: 40px;
+    }
+    .token-info {
+      display: flex;
+      flex-direction: column;
+    }
+    iframe {
+      width: 100%;
+      height: 400px;
+      border: none;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+    }
+    select {
+      margin-bottom: 1rem;
+      padding: 0.4rem;
+      background: var(--background);
+      color: var(--foreground);
+      border: 1px solid var(--accent);
+      border-radius: 0.3rem;
+    }
   </style>
-
-  <!-- Telegram WebApp -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- TradingView (via widget) -->
-  <script src="https://s3.tradingview.com/tv.js"></script>
 </head>
 <body>
   <header>
-    <img src="https://ton-domaine.com/logo.png" alt="LIQUIDWATCH"/>
-    <h1>LIQUIDWATCH</h1>
+    <img src="liquidwatch.png" alt="Logo LiquidWatch" />
+    <h1>🔍 Hyperliquid Tracker</h1>
   </header>
-  <div id="status">🚀 Connecting...</div>
-  <div id="pairs"></div>
+
+  <nav>
+    <button onclick="switchTab('pairs')">New Pairs</button>
+    <button onclick="switchTab('vme')">HyperVME</button>
+  </nav>
+
+  <section id="tab-pairs" class="tab active">
+    <div class="section">
+      <h2>New Pairs (Live)</h2>
+      <label for="filter">Sort by:</label>
+      <select id="filter" onchange="applyFilter()">
+        <option value="creation">Creation Time</option>
+        <option value="marketcap">Market Cap</option>
+        <option value="featured">Most Featured</option>
+      </select>
+      <div id="pairs-list"></div>
+    </div>
+  </section>
+
+  <section id="tab-vme" class="tab">
+    <div class="section">
+      <h2>HyperVME Price Chart</h2>
+      <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_2b21d&symbol=CRYPTO:VMEUSD&interval=30&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=F1F3F6&studies=[]&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=en"></iframe>
+    </div>
+  </section>
 
   <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready(); tg.expand();
+    function switchTab(tab) {
+      document.getElementById('tab-pairs').classList.remove('active');
+      document.getElementById('tab-vme').classList.remove('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+    }
 
-    const status = document.getElementById('status');
-    const pairsDiv = document.getElementById('pairs');
-    let known = {};
+    let allPairs = [];
 
-    // Connexion WebSocket
-    const ws = new WebSocket('wss://api.hyperliquid.xyz/ws');
-    ws.onopen = () => status.innerText = '✅ Connected to Hyperliquid';
-    ws.onerror = () => status.innerText = '❌ WS Error';
-    ws.onclose = () => status.innerText = '🔒 Disconnected';
+    const socket = new WebSocket("wss://api.hyperliquid.xyz/ws");
 
-    ws.onmessage = evt => {
-      const msg = JSON.parse(evt.data);
-      // Flux allMids : liste des paires
-      if (msg.channel === 'allMids') {
-        const mids = msg.data.mids;
-        for (let pair of Object.keys(mids)) {
-          if (!known[pair]) {
-            known[pair] = mids[pair];
-            addPair(pair);
-          }
-        }
+    socket.addEventListener("open", function () {
+      socket.send(JSON.stringify({ method: "subscribe", topic: "new_pairs" }));
+    });
+
+    socket.addEventListener("message", function (event) {
+      const data = JSON.parse(event.data);
+      if (data?.topic === "new_pairs") {
+        const pair = data.data;
+        pair.timestamp = Date.now();
+        pair.marketcap = Math.floor(Math.random() * 1000000);
+        pair.featured = Math.random();
+        allPairs.unshift(pair);
+        applyFilter();
       }
-    };
+    });
 
-    // Ajoute une paire dans le DOM
-    function addPair(symbol) {
-      const div = document.createElement('div');
-      div.className = 'pair';
-      div.id = `pair-${symbol}`;
+    function applyFilter() {
+      const filter = document.getElementById("filter").value;
+      const list = document.getElementById("pairs-list");
+      list.innerHTML = "";
+      let sortedPairs = [...allPairs];
+      if (filter === "creation") sortedPairs.sort((a, b) => b.timestamp - a.timestamp);
+      if (filter === "marketcap") sortedPairs.sort((a, b) => b.marketcap - a.marketcap);
+      if (filter === "featured") sortedPairs.sort((a, b) => b.featured - a.featured);
+      sortedPairs.forEach(pair => {
+        const card = document.createElement("div");
+        card.className = "token-card";
 
-      const img = document.createElement('img');
-      img.src = `https://cryptoicons.org/api/icon/${symbol.split('-')[0].toLowerCase()}/32`;
-      img.onerror = () => img.src = 'https://via.placeholder.com/32';
+        const img = document.createElement("img");
+        img.src = `https://cryptoicons.org/api/icon/${pair.symbol.toLowerCase()}/40`;
+        img.onerror = () => { img.src = 'placeholder.png'; };
 
-      const title = document.createElement('span');
-      title.innerText = symbol;
+        const info = document.createElement("div");
+        info.className = "token-info";
 
-      // Conteneur du graphique TradingView
-      const chart = document.createElement('div');
-      chart.className = 'chart';
-      chart.id = `chart-${symbol}`;
+        const name = document.createElement("strong");
+        name.textContent = `$${pair.symbol}`;
 
-      div.append(img, title, chart);
-      pairsDiv.prepend(div);
+        const desc = document.createElement("span");
+        desc.textContent = `Market Cap: $${pair.marketcap.toLocaleString()} | Created at: ${new Date(pair.timestamp).toLocaleTimeString()}`;
 
-      // Ajout du widget TradingView
-      new TradingView.widget({
-        container_id: chart.id,
-        width: '100%',
-        height: 150,
-        symbol: `BINANCE:${symbol.replace('-', '')}USD`,
-        interval: '1',
-        theme: 'dark',
-        style: '1',
-        toolbar_bg: '#222',
-        hide_side_toolbar: true,
-        allow_symbol_change: false,
+        info.appendChild(name);
+        info.appendChild(desc);
+        card.appendChild(img);
+        card.appendChild(info);
+        list.appendChild(card);
       });
     }
   </script>
