@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LIQUIDWATCH</title>
-  <meta name="description" content="Interface web pour suivre les nouvelles paires Hyperliquid." />
-  <link rel="icon" href="liquidwatch.png" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
   <style>
     :root {
@@ -28,13 +26,13 @@
     }
     header {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      margin-bottom: 20px;
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
     header img {
-      height: 64px;
-      margin-bottom: 10px;
+      width: 48px;
+      height: 48px;
     }
     h1 {
       font-size: 1.8rem;
@@ -105,13 +103,13 @@
 </head>
 <body>
   <header>
-    <img src="liquidwatch.png" alt="Logo LiquidWatch" />
-    <h1>🔍 Hyperliquid Tracker</h1>
+    <img src="liquidwatch.png" alt="LIQUIDWATCH logo">
+    <h1>LIQUIDWATCH</h1>
   </header>
 
   <nav>
     <button onclick="switchTab('pairs')">New Pairs</button>
-    <button onclick="switchTab('vme')">HyperVME</button>
+    <button onclick="switchTab('hype')">HYPE Chart</button>
   </nav>
 
   <section id="tab-pairs" class="tab active">
@@ -127,17 +125,17 @@
     </div>
   </section>
 
-  <section id="tab-vme" class="tab">
+  <section id="tab-hype" class="tab">
     <div class="section">
-      <h2>HyperVME Price Chart</h2>
-      <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_2b21d&symbol=CRYPTO:VMEUSD&interval=30&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=F1F3F6&studies=[]&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=en"></iframe>
+      <h2>HYPE Token Price Chart</h2>
+      <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_2b21d&symbol=CRYPTO:HYPEUSD&interval=30&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=F1F3F6&studies=[]&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=en"></iframe>
     </div>
   </section>
 
   <script>
     function switchTab(tab) {
       document.getElementById('tab-pairs').classList.remove('active');
-      document.getElementById('tab-vme').classList.remove('active');
+      document.getElementById('tab-hype').classList.remove('active');
       document.getElementById('tab-' + tab).classList.add('active');
     }
 
