@@ -23,12 +23,23 @@
       font-family: 'Inter', sans-serif;
       line-height: 1.6;
       padding: 1rem;
+      overflow-x: hidden;
+      animation: fadeIn 1s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     header {
       display: flex;
       align-items: center;
       gap: 1rem;
       margin-bottom: 2rem;
+      animation: slideDown 0.6s ease-out;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
     header a {
       display: flex;
@@ -36,11 +47,15 @@
       text-decoration: none;
     }
     header img {
-      width: 64px;
-      height: 64px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #fff;
+      padding: 4px;
+      object-fit: contain;
     }
     h1 {
-      font-size: 2rem;
+      font-size: 2.5rem;
       font-weight: 700;
       color: var(--foreground);
     }
@@ -52,35 +67,46 @@
     nav button {
       background: var(--card);
       color: var(--foreground);
-      border: 1px solid var(--accent);
-      padding: 0.6rem 1.2rem;
-      border-radius: 0.5rem;
+      border: 2px solid var(--accent);
+      padding: 0.8rem 1.6rem;
+      border-radius: 0.7rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: all 0.3s ease;
     }
     nav button:hover {
       background: var(--accent);
       color: #000;
+      transform: scale(1.05);
     }
     .tab {
       display: none;
     }
     .tab.active {
       display: block;
+      animation: fadeIn 0.6s ease-in;
     }
     .section {
       border: 1px solid #333;
-      border-radius: 0.5rem;
-      padding: 1.5rem;
+      border-radius: 0.7rem;
+      padding: 2rem;
       background: var(--card);
       margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
     .token-card {
       display: flex;
       align-items: center;
       gap: 1rem;
       margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      background: #222636;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .token-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 10px var(--accent);
     }
     .token-card img {
       width: 40px;
@@ -99,11 +125,11 @@
     }
     select {
       margin-bottom: 1rem;
-      padding: 0.4rem;
+      padding: 0.5rem 0.7rem;
       background: var(--background);
       color: var(--foreground);
       border: 1px solid var(--accent);
-      border-radius: 0.3rem;
+      border-radius: 0.4rem;
     }
     footer {
       border-top: 1px solid #333;
@@ -113,10 +139,55 @@
       text-align: center;
       color: #999;
     }
-    .hype-logo {
-      width: 48px;
-      height: 48px;
-      margin-top: 1rem;
+    .hype-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .hype-header img {
+      width: 36px;
+      height: auto;
+    }
+    #popup-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+    }
+    .popup {
+      display: flex;
+      align-items: center;
+      background: #1a1d2e;
+      border: 1px solid #00ffae;
+      border-radius: 0.6rem;
+      padding: 0.8rem;
+      margin-top: 0.5rem;
+      color: #fff;
+      width: 300px;
+      animation: slideIn 0.5s ease forwards;
+      box-shadow: 0 0 10px rgba(0,255,174,0.4);
+    }
+    .popup img {
+      width: 36px;
+      height: 36px;
+      margin-right: 10px;
+    }
+    .popup-content {
+      flex: 1;
+    }
+    .popup button {
+      background: #00ffae;
+      border: none;
+      padding: 0.4rem 0.7rem;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      color: #000;
+      font-weight: 600;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
   </style>
 </head>
@@ -148,14 +219,18 @@
 
   <section id="tab-hype" class="tab">
     <div class="section">
-      <h2>HYPE Token Price Chart</h2>
-      <img src="hyp.png" alt="HYPE Logo" class="hype-logo" />
-      <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_2b21d&symbol=PYTH:HYPEUSD&interval=30&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=F1F3F6&studies=[]&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=en"></iframe>
+      <div class="hype-header">
+        <img src="hyp.png" alt="HYPE Logo" />
+        <h2>HYPE Token Price Chart</h2>
+      </div>
+      <iframe src="https://s.tradingview.com/widgetembed/?symbol=PYTH:HYPEUSD&interval=30&theme=dark&style=1"></iframe>
     </div>
   </section>
 
+  <div id="popup-container"></div>
+
   <footer>
-    <p>© pump.fun 2025 · <a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a></p>
+    <p>© Liquidwatch 2025 · <a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a></p>
   </footer>
 
   <script>
@@ -166,7 +241,6 @@
     }
 
     let allPairs = [];
-
     const socket = new WebSocket("wss://api.hyperliquid.xyz/ws");
 
     socket.addEventListener("open", function () {
@@ -182,6 +256,7 @@
         pair.featured = Math.random();
         allPairs.unshift(pair);
         applyFilter();
+        showPopup(pair);
       }
     });
 
@@ -193,6 +268,7 @@
       if (filter === "creation") sortedPairs.sort((a, b) => b.timestamp - a.timestamp);
       if (filter === "marketcap") sortedPairs.sort((a, b) => b.marketcap - a.marketcap);
       if (filter === "featured") sortedPairs.sort((a, b) => b.featured - a.featured);
+
       sortedPairs.forEach(pair => {
         const card = document.createElement("div");
         card.className = "token-card";
@@ -216,6 +292,33 @@
         card.appendChild(info);
         list.appendChild(card);
       });
+    }
+
+    function showPopup(pair) {
+      const popupContainer = document.getElementById("popup-container");
+      const popup = document.createElement("div");
+      popup.className = "popup";
+
+      const img = document.createElement("img");
+      img.src = `https://cryptoicons.org/api/icon/${pair.symbol.toLowerCase()}/40`;
+      img.onerror = () => { img.src = 'placeholder.png'; };
+
+      const content = document.createElement("div");
+      content.className = "popup-content";
+      content.innerHTML = `<strong>$${pair.symbol}</strong><br><small>${new Date(pair.timestamp).toLocaleTimeString()}</small>`;
+
+      const button = document.createElement("button");
+      button.textContent = "Voir";
+      button.onclick = () => {
+        alert(`Détails du token ${pair.symbol}`);
+      };
+
+      popup.appendChild(img);
+      popup.appendChild(content);
+      popup.appendChild(button);
+      popupContainer.appendChild(popup);
+
+      setTimeout(() => popup.remove(), 6000);
     }
   </script>
 </body>
