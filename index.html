@@ -24,40 +24,24 @@
       line-height: 1.6;
       padding: 1rem;
       overflow-x: hidden;
-      animation: fadeIn 1s ease-in;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
     }
     header {
       display: flex;
       align-items: center;
       gap: 1rem;
       margin-bottom: 2rem;
-      animation: slideDown 0.6s ease-out;
-    }
-    @keyframes slideDown {
-      from { transform: translateY(-20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    header a {
-      display: flex;
-      align-items: center;
-      text-decoration: none;
     }
     header img {
-      width: 60px;
-      height: 60px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       background: #fff;
       padding: 4px;
       object-fit: contain;
     }
     h1 {
-      font-size: 2.5rem;
+      font-size: 1.8rem;
       font-weight: 700;
-      color: var(--foreground);
     }
     nav {
       display: flex;
@@ -84,7 +68,6 @@
     }
     .tab.active {
       display: block;
-      animation: fadeIn 0.6s ease-in;
     }
     .section {
       border: 1px solid #333;
@@ -94,42 +77,42 @@
       margin-bottom: 2rem;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
-    .token-card {
-      display: flex;
-      align-items: center;
+    #pairs-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 1rem;
-      margin-top: 1rem;
-      padding: 1rem;
-      border-radius: 0.5rem;
+    }
+    .token-card {
       background: #222636;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .token-card:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 10px var(--accent);
-    }
-    .token-card img {
-      width: 40px;
-      height: 40px;
-    }
-    .token-info {
+      border-radius: 0.5rem;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      transition: none;
+      cursor: pointer;
     }
-    iframe {
+    .token-card img {
       width: 100%;
-      height: 400px;
-      border: none;
+      height: 120px;
       border-radius: 0.5rem;
-      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      object-fit: cover;
     }
-    select {
-      margin-bottom: 1rem;
-      padding: 0.5rem 0.7rem;
-      background: var(--background);
-      color: var(--foreground);
-      border: 1px solid var(--accent);
-      border-radius: 0.4rem;
+    .token-info {
+      text-align: center;
+    }
+    .token-info a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.8rem;
+      display: block;
+    }
+    .loader {
+      text-align: center;
+      color: var(--accent);
+      padding: 1rem;
+      font-weight: bold;
     }
     footer {
       border-top: 1px solid #333;
@@ -139,64 +122,24 @@
       text-align: center;
       color: #999;
     }
-    .hype-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-    .hype-header img {
-      width: 36px;
-      height: auto;
-    }
-    #popup-container {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 9999;
-    }
-    .popup {
-      display: flex;
-      align-items: center;
-      background: #1a1d2e;
-      border: 1px solid #00ffae;
-      border-radius: 0.6rem;
-      padding: 0.8rem;
-      margin-top: 0.5rem;
-      color: #fff;
-      width: 300px;
-      animation: slideIn 0.5s ease forwards;
-      box-shadow: 0 0 10px rgba(0,255,174,0.4);
-    }
-    .popup img {
-      width: 36px;
-      height: 36px;
-      margin-right: 10px;
-    }
-    .popup-content {
-      flex: 1;
-    }
-    .popup button {
-      background: #00ffae;
+    iframe {
+      width: 100%;
+      height: 800px;
       border: none;
-      padding: 0.4rem 0.7rem;
-      border-radius: 0.4rem;
-      cursor: pointer;
-      color: #000;
-      font-weight: 600;
-    }
-    @keyframes slideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+      border-radius: 0.7rem;
     }
   </style>
+  <script>
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+    }
+  </script>
 </head>
 <body>
   <header>
-    <a href="#" onclick="switchTab('pairs')">
-      <img src="liquidwatch.png" alt="LIQUIDWATCH logo">
-    </a>
-    <h1>LIQUIDWATCH</h1>
+    <img src="liquidwatch.png" alt="Liquidwatch Logo">
+    <h1>Liquidwatch</h1>
   </header>
 
   <nav>
@@ -204,122 +147,24 @@
     <button onclick="switchTab('hype')">HYPE Chart</button>
   </nav>
 
-  <section id="tab-pairs" class="tab active">
-    <div class="section">
-      <h2>New Pairs (Live)</h2>
-      <label for="filter">Sort by:</label>
-      <select id="filter" onchange="applyFilter()">
-        <option value="creation">Creation Time</option>
-        <option value="marketcap">Market Cap</option>
-        <option value="featured">Most Featured</option>
-      </select>
-      <div id="pairs-list"></div>
-    </div>
-  </section>
+  <main>
+    <section id="tab-pairs" class="tab active">
+      <div id="pairs-list" class="section"></div>
+      <div class="loader" id="loader">Chargement en cours...</div>
+    </section>
 
-  <section id="tab-hype" class="tab">
-    <div class="section">
-      <div class="hype-header">
-        <img src="hyp.png" alt="HYPE Logo" />
+    <section id="tab-hype" class="tab">
+      <div class="section">
         <h2>HYPE Token Price Chart</h2>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=PYTH:HYPEUSD&interval=30&theme=dark&style=1"></iframe>
       </div>
-      <iframe src="https://s.tradingview.com/widgetembed/?symbol=PYTH:HYPEUSD&interval=30&theme=dark&style=1"></iframe>
-    </div>
-  </section>
-
-  <div id="popup-container"></div>
+    </section>
+  </main>
 
   <footer>
-    <p>© Liquidwatch 2025 · <a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a></p>
+    Liquidwatch © 2025. All rights reserved.
   </footer>
 
-  <script>
-    function switchTab(tab) {
-      document.getElementById('tab-pairs').classList.remove('active');
-      document.getElementById('tab-hype').classList.remove('active');
-      document.getElementById('tab-' + tab).classList.add('active');
-    }
-
-    let allPairs = [];
-    const socket = new WebSocket("wss://api.hyperliquid.xyz/ws");
-
-    socket.addEventListener("open", function () {
-      socket.send(JSON.stringify({ method: "subscribe", topic: "new_pairs" }));
-    });
-
-    socket.addEventListener("message", function (event) {
-      const data = JSON.parse(event.data);
-      if (data?.topic === "new_pairs") {
-        const pair = data.data;
-        pair.timestamp = Date.now();
-        pair.marketcap = Math.floor(Math.random() * 1000000);
-        pair.featured = Math.random();
-        allPairs.unshift(pair);
-        applyFilter();
-        showPopup(pair);
-      }
-    });
-
-    function applyFilter() {
-      const filter = document.getElementById("filter").value;
-      const list = document.getElementById("pairs-list");
-      list.innerHTML = "";
-      let sortedPairs = [...allPairs];
-      if (filter === "creation") sortedPairs.sort((a, b) => b.timestamp - a.timestamp);
-      if (filter === "marketcap") sortedPairs.sort((a, b) => b.marketcap - a.marketcap);
-      if (filter === "featured") sortedPairs.sort((a, b) => b.featured - a.featured);
-
-      sortedPairs.forEach(pair => {
-        const card = document.createElement("div");
-        card.className = "token-card";
-
-        const img = document.createElement("img");
-        img.src = `https://cryptoicons.org/api/icon/${pair.symbol.toLowerCase()}/40`;
-        img.onerror = () => { img.src = 'placeholder.png'; };
-
-        const info = document.createElement("div");
-        info.className = "token-info";
-
-        const name = document.createElement("strong");
-        name.textContent = `$${pair.symbol}`;
-
-        const desc = document.createElement("span");
-        desc.textContent = `Market Cap: $${pair.marketcap.toLocaleString()} | Created at: ${new Date(pair.timestamp).toLocaleTimeString()}`;
-
-        info.appendChild(name);
-        info.appendChild(desc);
-        card.appendChild(img);
-        card.appendChild(info);
-        list.appendChild(card);
-      });
-    }
-
-    function showPopup(pair) {
-      const popupContainer = document.getElementById("popup-container");
-      const popup = document.createElement("div");
-      popup.className = "popup";
-
-      const img = document.createElement("img");
-      img.src = `https://cryptoicons.org/api/icon/${pair.symbol.toLowerCase()}/40`;
-      img.onerror = () => { img.src = 'placeholder.png'; };
-
-      const content = document.createElement("div");
-      content.className = "popup-content";
-      content.innerHTML = `<strong>$${pair.symbol}</strong><br><small>${new Date(pair.timestamp).toLocaleTimeString()}</small>`;
-
-      const button = document.createElement("button");
-      button.textContent = "Voir";
-      button.onclick = () => {
-        alert(`Détails du token ${pair.symbol}`);
-      };
-
-      popup.appendChild(img);
-      popup.appendChild(content);
-      popup.appendChild(button);
-      popupContainer.appendChild(popup);
-
-      setTimeout(() => popup.remove(), 6000);
-    }
-  </script>
+  <script src="main.js"></script>
 </body>
 </html>

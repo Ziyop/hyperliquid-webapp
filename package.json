@@ -1,0 +1,13 @@
+{
+  "name": "hyperliquid-indexer",
+  "version": "1.0.0",
+  "description": "Hyperliquid Live Indexer",
+  "main": "indexer.js",
+  "scripts": {
+    "start": "node indexer.js"
+  },
+  "dependencies": {
+    "fs-extra": "^11.3.0",
+    "ws": "^8.13.0"
+  }
+}
